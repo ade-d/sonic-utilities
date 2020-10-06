@@ -284,6 +284,22 @@ def transceiver():
 @transceiver.command()
 @click.argument('interfacename', required=False)
 @click.option('-d', '--dom', 'dump_dom', is_flag=True, help="Also display Digital Optical Monitoring (DOM) data")
+@click.option('--verbose', is_flag=True, help="Enable verbose output")
+def summary(interfacename, dump_dom, verbose):
+    """Show interface transceiver summary information"""
+    cmd = "sfpshow summary"
+    if dump_dom:
+        cmd += " --dom"
+    if interfacename is not None:
+        if get_interface_mode() == "alias":
+            interfacename = iface_alias_converter.alias_to_name(interfacename)
+
+        cmd += " -p {}".format(interfacename)
+    clicommon.run_command(cmd, display_cmd=verbose)
+
+@transceiver.command()
+@click.argument('interfacename', required=False)
+@click.option('-d', '--dom', 'dump_dom', is_flag=True, help="Also display Digital Optical Monitoring (DOM) data")
 @click.option('--namespace', '-n', 'namespace', default=None, show_default=True,
               type=click.Choice(multi_asic_util.multi_asic_ns_choices()), help='Namespace name or all')
 @click.option('--verbose', is_flag=True, help="Enable verbose output")
